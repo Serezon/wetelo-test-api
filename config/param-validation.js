@@ -28,6 +28,7 @@ module.exports = {
     }
   },
 
+  //POST /api/books/create
   createBook: {
     body: {
       author: Joi.string().required(),
@@ -35,10 +36,11 @@ module.exports = {
       rating: Joi.number().required(),
       status: Joi.boolean().required(),
       description: Joi.string().required(),
-      file: Joi.string().required()
+      file: Joi.any()
     }
   },
 
+  //PUT /api/books/:bookId
   updateBook: {
     body: {
       author: Joi.string().required(),
