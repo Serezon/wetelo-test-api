@@ -50,7 +50,7 @@ if (config.env === 'development') {
 
 app.get('/uploads/:image', function (req, res, next) {
 
-  var options = {
+  let options = {
     root: __dirname + '/../uploads/',
     dotfiles: 'deny',
     headers: {
@@ -59,7 +59,7 @@ app.get('/uploads/:image', function (req, res, next) {
     }
   };
 
-  var fileName = req.params.image;
+  let fileName = req.params.image;
   res.sendFile(fileName, options, function (err) {
     if (err) {
       next(err);
