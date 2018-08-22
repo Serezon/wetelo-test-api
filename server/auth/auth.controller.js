@@ -44,7 +44,7 @@ function login(req, res, next) {
       if (result) {
         const token = jwt.sign({
           email: user[0].email
-        }, config.jwtSecret,{ expiresIn: '1m' });
+        }, config.jwtSecret,{ expiresIn: '1d' });
         return res.json({
           token,
           email: user.email
