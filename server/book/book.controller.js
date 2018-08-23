@@ -49,7 +49,7 @@ function update(req, res, next) {
   book.rating = req.body.rating;
   book.status = req.body.status;
   book.description = req.body.description;
-  if (req.file.path) { 
+  if (req.file && req.file.path) { 
     fs.unlink( path.join(__dirname, '/../../', book.file) );
     book.file = req.file.path;
   }

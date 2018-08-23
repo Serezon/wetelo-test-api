@@ -30,31 +30,39 @@ function login(req, res, next) {
   //     username: user.username
   //   });
   User.find({ email: req.body.email })
-  .exec()
-  .then( user => {
-    if (user.length < 1) {
-      const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
-      return next(err);
-    }
-    bcrypt.compare(req.body.password, user[0].password, (error, result) => {
-      if (error) {
+    .exec()
+    .then(user => {
+      if (user.length < 1) {
         const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
         return next(err);
       }
-      if (result) {
-        const token = jwt.sign({
-          email: user[0].email
-        }, config.jwtSecret,{ expiresIn: '1m' });
-        return res.json({
-          token,
-          email: user.email
-        });
-      }
-      const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
-      return next(err);
-    });
-  })
-  .catch(e => next(e));
+      bcrypt.compare(req.body.password, user[0].password, (error, result) => {
+        if (error) {
+          const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
+          return next(err);
+        }
+        if (result) {
+          const token = jwt.sign(
+            {
+              email: user[0].email,
+              permissions: [
+                'read'
+              ]
+            },
+            config.jwtSecret,
+            { expiresIn: '1d' }
+          );
+
+          return res.json({
+            token,
+            email: user.email
+          });
+        }
+        const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
+        return next(err);
+      });
+    })
+    .catch(e => next(e));
 }
 
 /**
