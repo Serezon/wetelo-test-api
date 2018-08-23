@@ -36,6 +36,7 @@ function login(req, res, next) {
         const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
         return next(err);
       }
+
       bcrypt.compare(req.body.password, user[0].password, (error, result) => {
         if (error) {
           const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
