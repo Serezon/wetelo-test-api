@@ -4,6 +4,7 @@ const expressJwt = require('express-jwt');
 const config = require('../../config/config');
 const paramValidation = require('../../config/param-validation');
 const bookCtrl = require('./book.controller');
+const guard = require('express-jwt-permissions')()
 const multer = require('multer');
 const storage = multer.diskStorage({
   destination: (req, file,cb) => {
@@ -33,27 +34,35 @@ const router = express.Router(); // eslint-disable-line new-cap
 
 router.route('/')
   /** GET /api/books - Get list of books */
-  .get(expressJwt({ secret: config.jwtSecret }),bookCtrl.list);
+  .get(expressJwt({ secret: config.jwtSecret }),
+  guard.check([ ['user'], ['editor'], ['admin'] ]),
+  bookCtrl.list);
 
 router.route('/create')
   /** POST /api/books/create - Create new book */
   .post(expressJwt({ secret: config.jwtSecret }),
+  guard.check([ ['admin'] ]),
   upload.single('file'),
   validate(paramValidation.createBook), 
   bookCtrl.create);
   
 router.route('/:bookId')
   /** GET /api/books/:bookId - Get book */
-  .get(expressJwt({ secret: config.jwtSecret }),bookCtrl.get)
+  .get(expressJwt({ secret: config.jwtSecret }),
+  guard.check([ ['admin'], ['editor'], ['user'] ]),
+  bookCtrl.get)
 
   /** PUT /api/books/:bookId - Update book */
   .put(expressJwt({ secret: config.jwtSecret }),
+  guard.check([ ['admin'], ['editor'] ]),
   upload.single('file'),
   validate(paramValidation.updateBook), 
   bookCtrl.update)
 
   /** DELETE /api/books/:bookId - Delete book */
-  .delete(expressJwt({ secret: config.jwtSecret }),bookCtrl.remove);
+  .delete(expressJwt({ secret: config.jwtSecret }),
+  guard.check([ ['admin'], ['editor'] ]),
+  bookCtrl.remove);
 
 /** Load book when API with bookId route parameter is hit */
 router.param('bookId', bookCtrl.load);

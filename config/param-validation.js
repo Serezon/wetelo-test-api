@@ -5,7 +5,8 @@ module.exports = {
   createUser: {
     body: {
       email: Joi.string().required().regex(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/),
-      password: Joi.string().required()
+      password: Joi.string().required(),
+      role: Joi.string().regex(/^admin$|^editor$|^user$/).default('user')
     }
   },
 
@@ -13,7 +14,8 @@ module.exports = {
   updateUser: {
     body: {
       email: Joi.string().required().regex(/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/),
-      password: Joi.string().required()
+      password: Joi.string().required(),
+      role: Joi.string().regex(/^admin$|^editor$|^user$/)
     },
     params: {
       userId: Joi.string().hex().required()

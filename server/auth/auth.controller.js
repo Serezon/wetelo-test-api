@@ -47,7 +47,7 @@ function login(req, res, next) {
             {
               email: user[0].email,
               permissions: [
-                'read'
+                user[0].role
               ]
             },
             config.jwtSecret,
@@ -56,7 +56,8 @@ function login(req, res, next) {
 
           return res.json({
             token,
-            email: user.email
+            email: user[0].email,
+            role: user[0].role
           });
         }
         const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
