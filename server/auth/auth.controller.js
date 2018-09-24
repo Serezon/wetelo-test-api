@@ -29,15 +29,15 @@ function login(req, res, next) {
   //     token,
   //     username: user.username
   //   });
-  User.find({ email: req.body.email })
+  User.findOne({ email: req.body.email})
     .exec()
     .then(user => {
-      if (user.length < 1) {
+      if (!user) {
         const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
         return next(err);
       }
 
-      bcrypt.compare(req.body.password, user[0].password, (error, result) => {
+      bcrypt.compare(req.body.password, user.password, (error, result) => {
         if (error) {
           const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
           return next(err);
@@ -45,9 +45,9 @@ function login(req, res, next) {
         if (result) {
           const token = jwt.sign(
             {
-              email: user[0].email,
+              email: user.email,
               permissions: [
-                user[0].role
+                user.role
               ]
             },
             config.jwtSecret,
@@ -56,8 +56,8 @@ function login(req, res, next) {
 
           return res.json({
             token,
-            email: user[0].email,
-            role: user[0].role
+            email: user.email,
+            role: user.role
           });
         }
         const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
